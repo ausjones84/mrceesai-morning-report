@@ -1,0 +1,29 @@
+name: MrCeesAI Morning Telegram Report
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # Every day at 7:00 AM EST (12:00 UTC)
+  workflow_dispatch:       # Run manually anytime from Actions tab
+
+jobs:
+  send-morning-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install gspread google-auth gtts
+
+      - name: Send morning Telegram voice + text report
+        run: python scheduler/morning_report.py
+        env:
+          GOOGLE_CREDS: ${{ secrets.GOOGLE_CREDS }}
+          SHEET_NAME: ${{ secrets.SHEET_NAME }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
