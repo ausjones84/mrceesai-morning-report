@@ -1,0 +1,30 @@
+name: MrCeesAI No-Website Lead Generator
+
+on:
+  schedule:
+    # Runs daily at 7:05 AM EST (12:05 UTC) — right after the morning report
+    - cron: '5 12 * * *'
+  workflow_dispatch:  # Also allow manual trigger for testing
+
+jobs:
+  generate-leads:
+    runs-on: ubuntu-latest
+    name: Generate 20 no-website leads and send to Telegram
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate and send leads to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scheduler/no_website_leads.py
